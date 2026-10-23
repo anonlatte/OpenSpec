@@ -10,7 +10,8 @@ import { parseSchema } from '../../../src/core/artifact-graph/schema.js';
 // regenerated that page, and it drifted: the `specs` block predated the
 // store-aware main-spec paths (#1703) and the `tasks` block still taught the
 // pre-#1660 rules, so the site contradicted the shipped instruction. This
-// keeps the quoted blocks byte-identical to schema.yaml.
+// keeps the quoted instructions and templates in sync with their sources,
+// allowing only normalized line endings and surrounding whitespace.
 const REPO_ROOT = path.join(__dirname, '..', '..', '..');
 const SCHEMA_DIR = path.join(REPO_ROOT, 'schemas', 'spec-driven');
 const DOC_PATH = path.join(
@@ -28,8 +29,30 @@ const normalize = (value: string): string => value.replace(/\r\n?/g, '\n').trim(
 // ``` example, so the outer fence has to be longer.
 const QUOTED_INSTRUCTION =
   /### Instructions\n\n[^\n]*\n\n(`{3,})md\n([\s\S]*?)\n\1\n/g;
+const QUOTED_STRUCTURE =
+  /### Structure\n\n[^\n]*\n\n(`{3,})md\n([\s\S]*?)\n\1\n/g;
 
 describe('published schema reference', () => {
+  it('quotes every spec-driven template verbatim', () => {
+    const schema = parseSchema(
+      fs.readFileSync(path.join(SCHEMA_DIR, 'schema.yaml'), 'utf-8')
+    );
+    const doc = fs.readFileSync(DOC_PATH, 'utf-8').replace(/\r\n?/g, '\n');
+    const quoted = [...doc.matchAll(QUOTED_STRUCTURE)].map(match => match[2]);
+
+    expect(quoted).toHaveLength(schema.artifacts.length);
+    schema.artifacts.forEach((artifact, index) => {
+      const template = fs.readFileSync(
+        path.join(SCHEMA_DIR, 'templates', artifact.template),
+        'utf-8'
+      );
+      expect(
+        normalize(quoted[index]),
+        `${artifact.id} structure is stale in ${path.basename(DOC_PATH)}`
+      ).toBe(normalize(template));
+    });
+  });
+
   it('quotes every spec-driven instruction verbatim (#1952)', () => {
     const schema = parseSchema(
       fs.readFileSync(path.join(SCHEMA_DIR, 'schema.yaml'), 'utf-8')

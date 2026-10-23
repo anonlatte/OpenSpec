@@ -51,7 +51,7 @@ Establishes why the change is needed.
 
 ### Structure
 
-The template the agent receives as the output format ([templates/proposal.md](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/templates/proposal.md)):
+The template the agent receives as the output format ([templates/proposal.md](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/templates/proposal.md)):
 
 ```md
 # Proposal
@@ -92,7 +92,7 @@ The template the agent receives as the output format ([templates/proposal.md](ht
 
 ### Instructions
 
-The instruction sent to the agent when it drafts this artifact (from [schema.yaml](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
+The instruction sent to the agent when it drafts this artifact (from [schema.yaml](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
 
 ```md
 Create the proposal document that establishes WHY this change is needed.
@@ -143,27 +143,88 @@ Each delta spec is the `spec.md` inside its capability folder. `openspec validat
 
 ### Structure
 
-The template the agent receives as the output format ([templates/spec.md](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/templates/spec.md)):
+The template the agent receives as the output format ([templates/spec.md](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/templates/spec.md)):
 
 ```md
 # Spec Delta
 
 ## Purpose
-<!-- New capabilities only: one or two sentences (50+ characters) on what this capability is for. Delete this section for an existing capability. -->
+
+[Только для новой возможности: кратко опишите её назначение не менее чем
+50 символами. Для изменения существующей возможности удалите этот раздел.]
 
 ## ADDED Requirements
 
-### Requirement: <!-- requirement name -->
-<!-- requirement text -->
+[Перед сохранением замените все подсказки в квадратных скобках и удалите
+неприменимый текст.]
 
-#### Scenario: <!-- scenario name -->
-- **WHEN** <!-- condition -->
-- **THEN** <!-- expected outcome -->
+[Для существующего требования используйте `MODIFIED Requirements` и перенесите
+его полную актуальную версию со всеми Scenario. Для удаления или переименования
+используйте штатные секции OpenSpec.]
+
+[Опишите наблюдаемое поведение атомарными Requirements: один Requirement — одно
+независимо проверяемое правило, а не весь экран или раздел системы. Для каждого
+Requirement обязателен хотя бы один Scenario.
+
+Если проект определяет формат идентификаторов Requirements:
+
+- используйте один уникальный и постоянный ID для каждого Requirement;
+- сохраняйте ID при `MODIFIED`, не перенумеровывайте и не используйте повторно;
+- не кодируйте в ID временный статус документа или форму описания требования;
+- сохраняйте идентификаторы источников отдельно как provenance;
+- если соглашения в проекте нет, не изобретайте новый namespace.
+
+Дополнительно используйте только подходящие по смыслу формы:
+
+- формулу или инвариант;
+- classifier, матрицу соответствий или разрешений;
+- таблицу решений;
+- таблицу или Mermaid-диаграмму состояний и переходов;
+- контракт операции;
+- правила отображения данных;
+- наблюдаемое поведение при внешнем сбое;
+- наблюдаемое обновление интерфейса.
+
+Это не обязательные разделы и не отдельные типы Requirements. Не добавляйте
+пустые или неприменимые формы и не придумывайте номинальные правила ради
+покрытия списка.
+
+Таблицу решений используйте для rule-based алгоритма, когда условия, правила и
+действия в таблице яснее формулы, инварианта или другой нотации. Чистая
+реализация правила сама по себе не делает его decision table.
+
+Помечайте дополнительные формы жирной подписью, например `**Инвариант**`,
+`**Матрица разрешений**`, `**Таблица решений**` или `**Переходы состояний**`:
+заголовок `####` зарезервирован OpenSpec только для Scenario. Техническая
+реализация относится в `design.md`.]
+
+### Requirement: [Стабильный ID — Название, если проект использует IDs; иначе название]
+
+[Сформулируйте нормативное правило с `SHALL` или `MUST`. Если правило дополнено
+таблицей, контрактом или диаграммой, они являются нормативной частью Requirement.
+Scenario приводит конкретный проверяемый пример и не повторяет механически все
+строки таблицы.]
+
+[Если структурированная нотация делает правило яснее, замените следующий
+необязательный блок подходящей формой и при необходимости повторите его. Если
+достаточно нормативного текста, удалите блок целиком.]
+
+**[Название применимой формы]**
+
+[Например: Формула, Инвариант, Матрица разрешений, Таблица решений, Переходы
+состояний, Контракт операции или Правила отображения. Опишите нормативное
+содержимое выбранной формы.]
+
+#### Scenario: [Ключевой или граничный пример]
+
+- **GIVEN** [исходное состояние, если оно существенно]
+- **WHEN** [условие или действие]
+- **THEN** [наблюдаемый результат]
 ```
 
 ### Instructions
 
-The instruction sent to the agent when it drafts this artifact (from [schema.yaml](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
+The instruction sent to the agent when it drafts this artifact (from [schema.yaml](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
 
 ````md
 Create specification files that define WHAT the system should do.
@@ -306,35 +367,57 @@ Explains how to implement the change. Drafted only when the change needs one.
 
 ### Structure
 
-The template the agent receives as the output format ([templates/design.md](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/templates/design.md)):
+The template the agent receives as the output format ([templates/design.md](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/templates/design.md)):
 
 ```md
 # Design
 
 ## Context
 
-<!-- Current state and constraints that shape the approach. See proposal.md for motivation - don't restate it -->
+[Перед сохранением замените все подсказки в квадратных скобках и удалите
+неприменимый текст. Опишите текущее состояние и ограничения, влияющие на
+решение. Не повторяйте мотивацию из `proposal.md` и наблюдаемое поведение из
+specs.]
 
 ## Goals / Non-Goals
 
 **Goals:**
-<!-- What this design aims to achieve -->
+
+[Что должен обеспечить технический дизайн.]
 
 **Non-Goals:**
-<!-- What is explicitly out of scope -->
+
+[Что явно не входит в техническое решение.]
 
 ## Decisions
 
-<!-- Key design decisions with rationale and alternatives considered -->
+[Опишите только существенные решения и применимые способы реализации на mini:
+
+- Resource/registry;
+- CRUDL или `aggregate`;
+- чистые business rules и decision seams везде, где правило можно отделить от
+  I/O и состояния: укажите точную форму — формула, инвариант, merge, selector,
+  reducer, classifier или настоящая decision table — а также явные входы,
+  выходы и границу unit-теста;
+- `CustomMethod` и owning service;
+- `task`/integration;
+- FSM;
+- SSE, invalidation и refetch.
+
+Не составляйте общий каталог сущностей и registries: фиксируйте только то, что
+нужно для реализации требований этого change. Для нетривиальных взаимодействий,
+потоков, последовательностей и состояний используйте подходящую Mermaid-диаграмму
+(`sequenceDiagram`, `flowchart` или `stateDiagram-v2`), когда она яснее текста.
+Диаграмма не обязательна.]
 
 ## Risks / Trade-offs
 
-<!-- Known risks and trade-offs -->
+[Известные риски и компромиссы.]
 ```
 
 ### Instructions
 
-The instruction sent to the agent when it drafts this artifact (from [schema.yaml](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
+The instruction sent to the agent when it drafts this artifact (from [schema.yaml](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
 
 ```md
 Create the design document that explains HOW to implement the change.
@@ -383,7 +466,7 @@ Breaks the implementation into checkable tasks. [apply](#apply) tracks progress 
 
 ### Structure
 
-The template the agent receives as the output format ([templates/tasks.md](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/templates/tasks.md)):
+The template the agent receives as the output format ([templates/tasks.md](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/templates/tasks.md)):
 
 ```md
 # Tasks
@@ -401,7 +484,7 @@ The template the agent receives as the output format ([templates/tasks.md](https
 
 ### Instructions
 
-The instruction sent to the agent when it drafts this artifact (from [schema.yaml](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
+The instruction sent to the agent when it drafts this artifact (from [schema.yaml](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
 
 ````md
 Create the task list that breaks down the implementation work.
@@ -476,7 +559,7 @@ The handoff from planning to implementation. Apply is the phase that works throu
 
 ### Settings
 
-The apply settings (from [schema.yaml](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
+The apply settings (from [schema.yaml](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
 
 ```yaml
 apply:
@@ -487,7 +570,7 @@ apply:
 
 ### Instructions
 
-The instruction sent to the agent when implementation starts (from [schema.yaml](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
+The instruction sent to the agent when implementation starts (from [schema.yaml](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/schema.yaml)):
 
 ```md
 Read context files, work through pending tasks, mark complete as you go.
@@ -496,7 +579,7 @@ Pause if you hit blockers or need clarification.
 
 ## schema.yaml
 
-The complete [schema.yaml](https://github.com/Fission-AI/OpenSpec/blob/main/schemas/spec-driven/schema.yaml), with instruction bodies elided. Each is shown in full in its section above.
+The complete [schema.yaml](https://github.com/vgmakeev/OpenSpec/blob/main/schemas/spec-driven/schema.yaml), with instruction bodies elided. Each is shown in full in its section above.
 
 ```yaml
 name: spec-driven
